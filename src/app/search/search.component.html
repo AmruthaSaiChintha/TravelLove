@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Style the background image */
+        body {
+            background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YnVzfGVufDB8fDB8fHww&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+            min-height: 700px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .suggestions {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #ccc;
+      border-top: none;
+      position: absolute;
+      background-color: #fff;
+      width: 90%;
+      max-height: 100px;
+      overflow-y: auto;
+      z-index: 1;
+    }
+
+    .suggestions li {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .suggestions li:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* Style the Spacer button */
+    .spacer-label {
+      visibility: hidden;
+    }
+
+        /* Style the sidebar with a semi-transparent background */
+        #sidebar {
+    background-color: transparent !important; /* Set the background color to transparent */
+    border-right: 1px solid #070707;
+}
+
+        /* Style the small text description below "PRICE" and "AM|PM" */
+        
+    </style>
+</head>
+<!--  -->
+<body>
+    <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <h1 class="text-center mt-4">Bus Search</h1>
+                <hr>
+
+                <!-- Source and Destination Search -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="source">Source</label>
+                            <input type="text" class="form-control" id="source" [(ngModel)]="source" placeholder="Enter Source" (input)="filterSource()">
+                            <ul class="suggestions" *ngIf="sourceSuggestions.length > 0">
+                                <li *ngFor="let suggestion of sourceSuggestions" (click)="selectSuggestion('source', suggestion)">
+                                    {{ suggestion }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="destination">Destination</label>
+                            <input type="text" class="form-control" id="destination" [(ngModel)]="destination" placeholder="Enter Destination" (input)="filterDestination()">
+                            <ul class="suggestions" *ngIf="destinationSuggestions.length > 0">
+                                <li *ngFor="let suggestion of destinationSuggestions" (click)="selectSuggestion('destination', suggestion)">
+                                    {{ suggestion }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="departureDate">Departure Date</label>
+                            <input type="date" class="form-control" id="departureDate" [(ngModel)]="departureDate">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="spacer-label">Spacer</label>
+                            <div class="input-group">
+                                <button class="btn btn-primary" (click)="searchBuses()">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bus Information -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div *ngIf="showBusDetails">
+                       
+                            <div *ngFor="let bus of filteredBuses">
+                                <div class="card my-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ bus.source }} - {{ bus.destination }}</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            Departure Time: {{ bus.departureTime }} | Departure Date: {{ bus.departureDate }}| BusName: {{ bus.busName }}| charges: {{ bus.charges }} | BusId: {{ bus.busId }}
+                                        </h6>
+                                        <button [ngClass]="{'btn btn-success': selectedBus === bus, 'btn btn-primary': selectedBus !== bus}" class="btn mr-3" (click)="showBusInfo(bus)">Select Seat</button>
+                                    </div>
+                                </div>
+                            </div>
+                       
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <div>
+                  <p class="text-center text-muted mt-5 mb-0"><a href="#!"
+                    class="forgot-password" routerLink="/customerDashboard">Go Back</a>
+                </div>
+            </main>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+           
+            <!-- Sidebar -->
+<nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+  <div class="position-sticky">
+      <ul class="nav flex-column">
+        
+          <li class="nav-item bg-transparent"> <!-- Add bg-transparent class here -->
+              <h4 class="nav-link">PRICE</h4>
+              <div class="form-group">
+                  <select class="form-control" [(ngModel)]="chargesSort" (change)="sortBuses()">
+                      <option value="all">PRICE</option>
+                      <option value="lowToHigh">Low to High</option>
+                      <option value="highToLow">High to Low</option>
+                  </select>
+              </div>
+          </li>
+          <li class="nav-item bg-transparent"> <!-- Add bg-transparent class here -->
+              <h4 class="nav-link">AM|PM</h4>
+              <div class="form-group">
+                  <select class="form-control" [(ngModel)]="departureTimesort" (change)="sortBuse()">
+                      <option value="all">AM|PM</option>
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                  </select>
+              </div>
+          </li>
+      </ul>
+  </div>
+  
+</nav>
+
+            <!-- Main Content -->
+          
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

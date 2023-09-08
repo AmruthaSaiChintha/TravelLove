@@ -1,0 +1,31 @@
+
+
+
+<li [hidden]="!IsLoggedIn" class="nav-item"><a class="nav-link" (click)="Logout()">Logout</a></li>   
+    <div class="container">
+    <h3 class="text-center my-5 items_title">Registered Users</h3>
+    <p class="text-center text-muted mt-5 mb-0"><a href="#!"
+      class="forgot-password" routerLink="/adminDashboard"></a>
+
+
+<table class="table table-striped table-dark">
+    <thead>
+      <tr>
+      
+        <th scope="col">Last</th>
+        <th scope="col">Handle</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let User of User">
+            <td>{{User.username}}</td>
+            <td>{{User.email}}</td>
+        </tr> 
+     
+    </tbody>
+  </table>
+  <div>
+    <p class="text-center text-muted mt-5 mb-0"><a href="#!"
+      class="forgot-password" routerLink="/adminDashboard">Go Back</a>
+  </div>
+  </div>
